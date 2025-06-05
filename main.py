@@ -10,7 +10,6 @@ class BookSchema(BaseModel):
     title: str
     author: str | None
 
-
 @app.get("/book/{id}")
 def get_book(id: int, db=Depends(get_db)):
     return db.query(Book).get(id)
