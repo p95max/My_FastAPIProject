@@ -1,9 +1,24 @@
-from sqlalchemy import Column, Integer, String
-from database import Base
+from sqlalchemy import Column, Integer, String, DateTime, Text, func
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column
 
-class Book(Base):
-    __tablename__ = "books"
+Base = declarative_base()
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    author = Column(String, nullable=True)
+
+class LostItem(Base):
+    __tablename__ = "lost_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(Text, default='')
+    lost_date: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
+    location: Mapped[str] = mapped_column(String)
+
+
+class FoundItem(Base):
+    __tablename__ = "found_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, index=True)
+    description: Mapped[str] = mapped_column(Text, default='')
+    found_date: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=func.now())
+    location: Mapped[str] = mapped_column(String)
