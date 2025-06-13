@@ -19,6 +19,13 @@ lostitem_tag = Table(
     Column('tag_id', ForeignKey('tags.id'), primary_key=True)
 )
 
+lostitem_tag = Table(
+    'founditem_tag',
+    Base.metadata,
+    Column('found_item_id', ForeignKey('found_items.id'), primary_key=True),
+    Column('tag_id', ForeignKey('tags.id'), primary_key=True)
+)
+
 class Tag(Base):
     __tablename__ = "tags"
 
@@ -26,6 +33,7 @@ class Tag(Base):
     name: Mapped[str] = mapped_column(String(255), unique=True)
 
     lost_items:Mapped[list['LostItem']] = relationship("LostItem", secondary='lostitem_tag', back_populates="tags")
+    found_items:Mapped[list['FoundItem']] = relationship("FoundItem", secondary='founditem_tag', back_populates="tags")
 
 class LostItem(Base):
     __tablename__ = "lost_items"
@@ -50,5 +58,7 @@ class FoundItem(Base):
     location: Mapped[str] = mapped_column(String)
     category_id: Mapped[int] = mapped_column(ForeignKey('category.id'), index=True, default=None, nullable=True)
     category: Mapped[Category] = relationship(back_populates="found_items")
+
+    tags: Mapped[list['Tag']] = relationship(secondary='founditem_tag', back_populates="found_items")
 
 
