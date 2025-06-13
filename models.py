@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text, func, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Text, func, ForeignKey, Table
 from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 
 Base = declarative_base()
@@ -12,6 +12,21 @@ class Category(Base):
     lost_items:Mapped[list['LostItem']] = relationship("LostItem", back_populates="category")
     found_items:Mapped[list['FoundItem']] = relationship("FoundItem", back_populates="category")
 
+lostitem_tag = Table(
+    'lostitem_tag',
+    Base.metadata,
+    Column('lost_item_id', ForeignKey('lost_items.id'), primary_key=True),
+    Column('tag_id', ForeignKey('tags.id'), primary_key=True)
+)
+
+class Tag(Base):
+    __tablename__ = "tags"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255), unique=True)
+
+    lost_items:Mapped[list['LostItem']] = relationship("LostItem", secondary='lostitem_tag', back_populates="tags")
+
 class LostItem(Base):
     __tablename__ = "lost_items"
 
@@ -23,7 +38,7 @@ class LostItem(Base):
     category_id: Mapped[int] = mapped_column(ForeignKey('category.id'), index=True, default=None, nullable=True)
     category: Mapped[Category] = relationship(back_populates="lost_items")
 
-
+    tags: Mapped[list['Tag']] = relationship(secondary='lostitem_tag', back_populates="lost_items")
 
 class FoundItem(Base):
     __tablename__ = "found_items"
@@ -35,3 +50,5 @@ class FoundItem(Base):
     location: Mapped[str] = mapped_column(String)
     category_id: Mapped[int] = mapped_column(ForeignKey('category.id'), index=True, default=None, nullable=True)
     category: Mapped[Category] = relationship(back_populates="found_items")
+
+
