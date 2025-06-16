@@ -3,6 +3,12 @@ from sqlalchemy.orm import declarative_base, Mapped, mapped_column, relationship
 
 Base = declarative_base()
 
+class User(Base):
+    __tablename__ = 'users'
+    id: Mapped[int] = Column(Integer, primary_key=True)
+    username: Mapped[str] = Column(String(255), unique=True)
+    password: Mapped[str] = Column(String(255))
+
 class Category(Base):
     __tablename__ = "category"
 
@@ -60,5 +66,6 @@ class FoundItem(Base):
     category: Mapped[Category] = relationship(back_populates="found_items")
 
     tags: Mapped[list['Tag']] = relationship(secondary='founditem_tag', back_populates="found_items")
+
 
 

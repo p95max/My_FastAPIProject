@@ -1,6 +1,16 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
+#User auth
+class CreateUser(BaseModel):
+    username: str
+    password: str
+    password2: str
+
+class AuthUser(BaseModel):
+    username: str
+    password: str
+
 # Categories and tags
 class CategoryBase(BaseModel):
     name: str
