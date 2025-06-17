@@ -16,3 +16,25 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  web:
+    build: .
+    container_name: lost_found
+    ports:
+      - "8001:8000"
+    depends_on:
+      - db
+    links:
+      - db
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    links:
+      - web
+    environment:
+      - NGINX_PORT=80
+
